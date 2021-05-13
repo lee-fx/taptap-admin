@@ -1,18 +1,13 @@
-# mall-admin-web
+# taptap-admin-web
 
 ## 前言
 
-该项目为前后端分离项目的前端部分，后端项目`mall`地址：[传送门](https://github.com/macrozheng/mall)。
+该项目为taptap管理后台，前后端分离项目的前端部分，后端项目`taptap-api`地址：[传送门](https://github.com/lee-fx/taptap-api)。这个项目是一个辅助前端项目，借鉴的前辈们的框架二开而来，不是自己写的，借鉴项目（mall-admin-web [传送门1](https://github.com/macrozheng/mall-admin-web) vue-element-admin [传送门2](https://github.com/PanJiaChen/vue-element-admin)）
 
 ## 项目介绍
 
-`mall-admin-web`是一个电商后台管理系统的前端项目，基于Vue+Element实现。主要包括商品管理、订单管理、会员管理、促销管理、运营管理、内容管理、统计报表、财务管理、权限管理、设置等功能。
+`taptap-admin-web`是一个仿taptap的后台管理系统的前端项目，基于Vue+Element实现。包括web基本功能。
 
-### 项目演示
-
-项目在线演示地址：[http://www.macrozheng.com/admin/](http://www.macrozheng.com/admin/)  
-
-![后台管理系统功能演示](http://img.macrozheng.com/mall/project/mall_admin_show.png)
 
 ### 技术选型
 
@@ -26,7 +21,8 @@ Axios | 前端HTTP框架 | [https://github.com/axios/axios](https://github.com/a
 v-charts | 基于Echarts的图表框架 | [https://v-charts.js.org/](https://v-charts.js.org/)
 Js-cookie | cookie管理工具 | [https://github.com/js-cookie/js-cookie](https://github.com/js-cookie/js-cookie)
 nprogress | 进度条控件 | [https://github.com/rstacruz/nprogress](https://github.com/rstacruz/nprogress)
-vue-element-admin | 项目脚手架参考 | [https://github.com/PanJiaChen/vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
+mall-admin-web | 项目使用 | [https://github.com/macrozheng/mall-admin-web](https://github.com/macrozheng/mall-admin-web)
+vue-element-admin | 项目使用 | [https://github.com/PanJiaChen/vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
 
 ### 项目布局
 
@@ -44,34 +40,25 @@ src -- 源码目录
     ├── home -- 首页
     ├── layout -- 通用页面加载框架
     ├── login -- 登录页
-    ├── oms -- 订单模块页面
-    ├── pms -- 商品模块页面
-    └── sms -- 营销模块页面
+    ├── ...   -- 功能逻辑
 ```
 
 ## 搭建步骤
 - 下载node并安装：[https://nodejs.org/dist/v12.14.0/node-v12.14.0-x64.msi](https://nodejs.org/dist/v12.14.0/node-v12.14.0-x64.msi);
-- 该项目为前后端分离项目，访问本地访问接口需搭建后台环境，搭建请参考后端项目[传送门](https://github.com/macrozheng/mall);
-- 访问在线接口无需搭建后台环境，只需将`config/dev.env.js`文件中的`BASE_API`改为[http://admin-api.macrozheng.com](http://admin-api.macrozheng.com)即可;
-- 如果你对接的是[mall-swarm](https://github.com/macrozheng/mall-swarm)微服务后台的话，所有接口都需要通过网关访问，需要将`config/dev.env.js`文件中的`BASE_API`改为[http://localhost:8201/mall-admin](http://localhost:8201/mall-admin)；
+
 - 克隆源代码到本地，使用IDEA打开，并完成编译;
 - 在IDEA命令行中运行命令：npm install,下载相关依赖;
 - 在IDEA命令行中运行命令：npm run dev,运行项目;
-- 访问地址：[http://localhost:8090](http://localhost:8090) 即可打开后台管理系统页面;
-- 具体部署过程请参考：[mall前端项目的安装与部署](http://www.macrozheng.com/#/deploy/mall_deploy_web)
+- 访问地址：[http://localhost:7788](http://localhost:7788) 即可打开后台管理系统页面;
+
 - `注意`：如果遇到无法运行npm命令，需要配置npm的环境变量，如在path变量中添加：C:\Users\zhenghong\AppData\Roaming\npm;
-- `注意`：如果遇到npm install无法成功下载依赖，请参考[使用Jenkins一键打包部署前端应用，就是这么6！](http://www.macrozheng.com/#/reference/jenkins_vue) 中`遇到的坑`部分。
 
-## 公众号
 
-学习不走弯路，关注公众号「**macrozheng**」，回复「**学习路线**」，获取mall项目专属学习路线！
-
-加微信群交流，公众号后台回复「**加群**」即可。
-
-![公众号图片](http://macro-oss.oss-cn-shenzhen.aliyuncs.com/mall/banner/qrcode_for_macrozheng_258.jpg)
+## 微信
+如果项目哪里有冒犯或者不舒服的地方，请加微信，我一定第一时间改正。[微信]
+li18347457131 
 
 ## 许可证
 
-[Apache License 2.0](https://github.com/macrozheng/mall-admin-web/blob/master/LICENSE)
 
-Copyright (c) 2018-2021 macrozheng
+Copyright (c) 2021-2021 macrozheng
