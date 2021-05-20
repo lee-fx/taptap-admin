@@ -33,7 +33,7 @@ export function updateMenu(id, data) {
 
 export function getMenu(id) {
   return request({
-    url: '/menu/' + id,
+    url: '/menu/getMenu/' + id,
     method: 'get',
   })
 }
