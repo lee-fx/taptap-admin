@@ -61,8 +61,8 @@
   import {listAllCate,createResourceCategory,updateResourceCategory,deleteResourceCategory} from '@/api/resourceCategory';
   import {formatDate} from '@/utils/date';
   const defaultResourceCategory={
-    name:null,
-    sort:0
+    name:"",
+    sort:"0"
   };
   export default {
     name: 'resourceCategoryList',

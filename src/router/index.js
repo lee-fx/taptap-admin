@@ -43,6 +43,33 @@ export const constantRouterMap = [
  */
 export const asyncRouterMap = [
   {
+    path: '/games',
+    component: Layout,
+    redirect: '/games/game',
+    name: 'games',
+    meta: { title: '游戏', icon: 'game' },
+    children: [{
+      path: 'games',
+      name: 'games',
+      component: () => import('@/views/games/game/index'),
+      meta: { title: '游戏列表', icon: 'game-list' }
+    },
+    {
+      path: 'addGame',
+      name: 'addGame',
+      component: () => import('@/views/games/game/addGame'),
+      meta: { title: '添加游戏', icon: 'game-add' }
+    },
+    {
+      path: 'updateGame',
+      name: 'updateGame',
+      component: () => import('@/views/games/game/updateGame'),
+      meta: { title: '修改游戏', icon: 'game-add' },
+      hidden: true
+    },
+    ]
+  },
+  {
     path: '/pms',
     component: Layout,
     redirect: '/pms/product',
