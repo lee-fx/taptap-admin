@@ -49,8 +49,8 @@ export const asyncRouterMap = [
     name: 'games',
     meta: { title: '游戏', icon: 'game' },
     children: [{
-      path: 'games',
-      name: 'games',
+      path: 'index',
+      name: 'index',
       component: () => import('@/views/games/game/index'),
       meta: { title: '游戏列表', icon: 'game-list' }
     },
@@ -64,7 +64,7 @@ export const asyncRouterMap = [
       path: 'updateGame',
       name: 'updateGame',
       component: () => import('@/views/games/game/updateGame'),
-      meta: { title: '修改游戏', icon: 'game-add' },
+      meta: { title: '修改游戏', icon: 'game-cate' },
       hidden: true
     },
     ]
