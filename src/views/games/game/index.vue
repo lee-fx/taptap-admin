@@ -39,22 +39,22 @@
           <template slot-scope="scope">{{scope.row.id}}</template>
         </el-table-column>
         <el-table-column label="ICON" width="120" align="center">
-          <template slot-scope="scope"><img style="height: 80px" :src="scope.row.pic"></template>
+          <!-- <template slot-scope="scope"><img style="height: 80px" :src="scope.row.pic"></template> -->
         </el-table-column>
         <el-table-column label="游戏名称" align="center">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <p>{{scope.row.name}}</p>
             <p>品牌：{{scope.row.brandName}}</p>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column label="游戏公司" width="120" align="center">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <p>价格：￥{{scope.row.price}}</p>
             <p>货号：{{scope.row.productSn}}</p>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column label="标签" width="140" align="center">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <p>上架：
               <el-switch @change="handlePublishStatusChange(scope.$index, scope.row)" :active-value="1" :inactive-value="0" v-model="scope.row.publishStatus">
               </el-switch>
@@ -67,30 +67,30 @@
               <el-switch @change="handleRecommendStatusChange(scope.$index, scope.row)" :active-value="1" :inactive-value="0" v-model="scope.row.recommandStatus">
               </el-switch>
             </p>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column label="排序" width="100" align="center">
-          <template slot-scope="scope">{{scope.row.sort}}</template>
+          <!-- <template slot-scope="scope">{{scope.row.sort}}</template> -->
         </el-table-column>
         <el-table-column label="SKU库存" width="100" align="center">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <el-button type="primary" icon="el-icon-edit" @click="handleShowSkuEditDialog(scope.$index, scope.row)" circle></el-button>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column label="销量" width="100" align="center">
-          <template slot-scope="scope">{{scope.row.sale}}</template>
+          <!-- <template slot-scope="scope">{{scope.row.sale}}</template> -->
         </el-table-column>
         <el-table-column label="审核状态" width="100" align="center">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <p>{{scope.row.verifyStatus | verifyStatusFilter}}</p>
             <p>
               <el-button type="text" @click="handleShowVerifyDetail(scope.$index, scope.row)">审核详情
               </el-button>
             </p>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column label="操作" width="160" align="center">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <p>
               <el-button size="mini" @click="handleShowProduct(scope.$index, scope.row)">查看
               </el-button>
@@ -103,7 +103,7 @@
               <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除
               </el-button>
             </p>
-          </template>
+          </template> -->
         </el-table-column>
       </el-table>
     </div>
@@ -117,12 +117,12 @@
       </el-button>
     </div>
     <div class="pagination-container">
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" layout="total, sizes,prev, pager, next,jumper" :page-size="listQuery.pageSize" :page-sizes="[5,10,15]" :current-page.sync="listQuery.pageNum" :total="total">
+      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" layout="total, sizes,prev, pager, next,jumper" :page-size="listQuery.pageSize" :page-sizes="[10,20,50]" :current-page.sync="listQuery.pageNum" :total="total">
       </el-pagination>
     </div>
     <el-dialog title="编辑货品信息" :visible.sync="editSkuInfo.dialogVisible" width="40%">
       <span>商品货号：</span>
-      <span>{{editSkuInfo.productSn}}</span>
+      <!-- <span>{{editSkuInfo.productSn}}</span>
       <el-input placeholder="按sku编号搜索" v-model="editSkuInfo.keyword" size="small" style="width: 50%;margin-left: 20px">
         <el-button slot="append" icon="el-icon-search" @click="handleSearchEditSku"></el-button>
       </el-input>
@@ -156,7 +156,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="editSkuInfo.dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="handleEditSkuConfirm">确 定</el-button>
-      </span>
+      </span> -->
     </el-dialog>
   </div>
 </template>
@@ -181,7 +181,7 @@ import {
 const defaultListQuery = {
   gameName: "",
   pageNum: 1,
-  pageSize: 5,
+  pageSize: 10,
   // publishStatus: null,
   // verifyStatus: null,
   // productSn: null,
@@ -193,7 +193,7 @@ export default {
   data() {
     return {
       editSkuInfo: {
-        // dialogVisible: false,
+        dialogVisible: false,
         // productId: null,
         // productSn: "",
         // productAttributeCategoryId: null,
@@ -201,6 +201,7 @@ export default {
         // productAttr: [],
         // keyword: null,
       },
+      // 删除选项
       operates: [
         {
           label: "游戏上架",
@@ -248,8 +249,8 @@ export default {
   },
   created() {
     this.getList();
-    this.getBrandList();
-    this.getProductCateList();
+    // this.getBrandList();
+    // this.getProductCateList();
   },
   watch: {
     selectProductCateValue: function (newValue) {
