@@ -1,4 +1,6 @@
 import request from '@/utils/request'
+
+// 获取游戏列表
 export function fetchList(params) {
     return request({
         url: '/game/list',

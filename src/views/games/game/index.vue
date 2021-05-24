@@ -39,71 +39,73 @@
           <template slot-scope="scope">{{scope.row.id}}</template>
         </el-table-column>
         <el-table-column label="ICON" width="120" align="center">
-          <!-- <template slot-scope="scope"><img style="height: 80px" :src="scope.row.pic"></template> -->
+          <template slot-scope="scope"><img style="height: 80px" :src="scope.row.icon"></template>
         </el-table-column>
         <el-table-column label="游戏名称" align="center">
-          <!-- <template slot-scope="scope">
+          <template slot-scope="scope">
             <p>{{scope.row.name}}</p>
-            <p>品牌：{{scope.row.brandName}}</p>
-          </template> -->
+          </template>
         </el-table-column>
         <el-table-column label="游戏公司" width="120" align="center">
-          <!-- <template slot-scope="scope">
-            <p>价格：￥{{scope.row.price}}</p>
-            <p>货号：{{scope.row.productSn}}</p>
-          </template> -->
+          <template slot-scope="scope">
+            <p>{{scope.row.company}}</p>
+            <!-- <p>简称：{{scope.row.company_tag}}</p> -->
+          </template>
         </el-table-column>
-        <el-table-column label="标签" width="140" align="center">
-          <!-- <template slot-scope="scope">
-            <p>上架：
-              <el-switch @change="handlePublishStatusChange(scope.$index, scope.row)" :active-value="1" :inactive-value="0" v-model="scope.row.publishStatus">
+        <el-table-column label="状态" width="140" align="center">
+          <template slot-scope="scope">
+            <p>
+              <el-switch @change="handlePublishStatusChange(scope.$index, scope.row)" :active-value="0" :inactive-value="1" v-model="scope.row.status">
               </el-switch>
             </p>
-            <p>新品：
+            <!-- <p>新品：
               <el-switch @change="handleNewStatusChange(scope.$index, scope.row)" :active-value="1" :inactive-value="0" v-model="scope.row.newStatus">
               </el-switch>
             </p>
             <p>推荐：
               <el-switch @change="handleRecommendStatusChange(scope.$index, scope.row)" :active-value="1" :inactive-value="0" v-model="scope.row.recommandStatus">
               </el-switch>
-            </p>
-          </template> -->
+            </p> -->
+          </template>
         </el-table-column>
-        <el-table-column label="排序" width="100" align="center">
-          <!-- <template slot-scope="scope">{{scope.row.sort}}</template> -->
+        <el-table-column label="评星" width="100" align="center">
+          <template slot-scope="scope">{{scope.row.mana}}</template>
         </el-table-column>
-        <el-table-column label="SKU库存" width="100" align="center">
-          <!-- <template slot-scope="scope">
+        <el-table-column label="关注" width="100" align="center">
+          <template slot-scope="scope">{{scope.row.attention}}</template>
+        </el-table-column>
+        <el-table-column label="版本" width="100" align="center">
+          <template slot-scope="scope">{{scope.row.gameVersion}}</template>
+        </el-table-column>
+        <el-table-column label="大小" width="100" align="center">
+          <template slot-scope="scope">{{scope.row.gameSize}}</template>
+        </el-table-column>
+        <el-table-column label="描述" width="120" align="center">
+          <template slot-scope="scope">{{scope.row.gameDesc.slice(0,8)  + '...'}}</template>
+        </el-table-column>
+        <el-table-column label="标签" width="100" align="center">
+          <template slot-scope="scope">
             <el-button type="primary" icon="el-icon-edit" @click="handleShowSkuEditDialog(scope.$index, scope.row)" circle></el-button>
-          </template> -->
+          </template>
         </el-table-column>
         <el-table-column label="销量" width="100" align="center">
           <!-- <template slot-scope="scope">{{scope.row.sale}}</template> -->
         </el-table-column>
-        <el-table-column label="审核状态" width="100" align="center">
-          <!-- <template slot-scope="scope">
-            <p>{{scope.row.verifyStatus | verifyStatusFilter}}</p>
-            <p>
-              <el-button type="text" @click="handleShowVerifyDetail(scope.$index, scope.row)">审核详情
-              </el-button>
-            </p>
-          </template> -->
-        </el-table-column>
         <el-table-column label="操作" width="160" align="center">
-          <!-- <template slot-scope="scope">
+          <template slot-scope="scope">
             <p>
               <el-button size="mini" @click="handleShowProduct(scope.$index, scope.row)">查看
               </el-button>
               <el-button size="mini" @click="handleUpdateProduct(scope.$index, scope.row)">编辑
               </el-button>
             </p>
-            <p>
+            <!-- <p>
               <el-button size="mini" @click="handleShowLog(scope.$index, scope.row)">日志
               </el-button>
               <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除
               </el-button>
-            </p>
-          </template> -->
+            </p> -->
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -164,14 +166,12 @@
 <script>
 // 引入接口
 import {
-
   fetchList,
 
   // updateDeleteStatus,
   // updateNewStatus,
   // updateRecommendStatus,
   // updatePublishStatus,
-
 } from "@/api/game";
 
 // import { fetchList as fetchProductAttrList } from "@/api/productAttr";
@@ -277,6 +277,26 @@ export default {
         return spData[index].value;
       } else {
         return null;
+      }
+    },
+    handleShowSkuEditDialog(index, row) {
+      this.editSkuInfo.dialogVisible = true;
+      this.editSkuInfo.productId = row.id;
+      this.editSkuInfo.productSn = row.productSn;
+      this.editSkuInfo.productAttributeCategoryId =
+        row.productAttributeCategoryId;
+      this.editSkuInfo.keyword = null;
+      fetchSkuStockList(row.id, { keyword: this.editSkuInfo.keyword }).then(
+        (response) => {
+          this.editSkuInfo.stockList = response.data;
+        }
+      );
+      if (row.productAttributeCategoryId != null) {
+        fetchProductAttrList(row.productAttributeCategoryId, { type: 0 }).then(
+          (response) => {
+            this.editSkuInfo.productAttr = response.data.list;
+          }
+        );
       }
     },
     getList() {
