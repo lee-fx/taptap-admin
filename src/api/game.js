@@ -9,6 +9,35 @@ export function fetchList(params) {
     })
 }
 
+// 获取tages
+export function gameTags() {
+    return request({
+        url: '/game/gameTag',
+        method: 'get',
+        params: []
+    })
+}
+
+// 获取游戏标签列表
+export function gameTagListByGameId(params) {
+    return request({
+        url: '/game/gameTagByGameId',
+        method: 'get',
+        params: params
+    })
+}
+
+// 获取游戏列表
+export function getCompany(params) {
+    return request({
+        url: '/company',
+        method: 'get',
+        params: params
+    })
+}
+
+
+
 export function fetchSimpleList(params) {
     return request({
         url: '/game/simpleList',

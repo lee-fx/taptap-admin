@@ -34,7 +34,9 @@
     </el-card>
     <div class="table-container">
       <el-table ref="productTable" :data="list" style="width: 100%" @selection-change="handleSelectionChange" v-loading="listLoading" border>
+
         <el-table-column type="selection" width="60" align="center"></el-table-column>
+
         <el-table-column label="编号" width="100" align="center">
           <template slot-scope="scope">{{scope.row.id}}</template>
         </el-table-column>
@@ -46,12 +48,12 @@
             <p>{{scope.row.name}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="游戏公司" width="120" align="center">
+        <!-- <el-table-column label="游戏公司" width="120" align="center">
           <template slot-scope="scope">
             <p>{{scope.row.company}}</p>
-            <!-- <p>简称：{{scope.row.company_tag}}</p> -->
+            <p>简称：{{scope.row.company_tag}}</p>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="状态" width="140" align="center">
           <template slot-scope="scope">
             <p>
@@ -85,11 +87,8 @@
         </el-table-column>
         <el-table-column label="标签" width="100" align="center">
           <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-edit" @click="handleShowSkuEditDialog(scope.$index, scope.row)" circle></el-button>
+            <el-button type="primary" icon="el-icon-edit" @click="handleShowGameTagEditDialog(scope.row.id)" circle></el-button>
           </template>
-        </el-table-column>
-        <el-table-column label="销量" width="100" align="center">
-          <!-- <template slot-scope="scope">{{scope.row.sale}}</template> -->
         </el-table-column>
         <el-table-column label="操作" width="160" align="center">
           <template slot-scope="scope">
@@ -118,56 +117,56 @@
         确定
       </el-button>
     </div>
+
+    // 分页
     <div class="pagination-container">
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" layout="total, sizes,prev, pager, next,jumper" :page-size="listQuery.pageSize" :page-sizes="[10,20,50]" :current-page.sync="listQuery.pageNum" :total="total">
       </el-pagination>
     </div>
-    <el-dialog title="编辑货品信息" :visible.sync="editSkuInfo.dialogVisible" width="40%">
-      <span>商品货号：</span>
-      <!-- <span>{{editSkuInfo.productSn}}</span>
-      <el-input placeholder="按sku编号搜索" v-model="editSkuInfo.keyword" size="small" style="width: 50%;margin-left: 20px">
-        <el-button slot="append" icon="el-icon-search" @click="handleSearchEditSku"></el-button>
-      </el-input>
-      <el-table style="width: 100%;margin-top: 20px" :data="editSkuInfo.stockList" border>
-        <el-table-column label="SKU编号" align="center">
+
+    <el-dialog title="编辑游戏标签" :visible.sync="editGameTagInfo.dialogVisible" width="40%">
+      <!-- <el-table style="width: 100%;margin-top: 20px" :data=editGameTagInfo.tagList border>
+        <el-table-column label="名称" width="200" align="center">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.skuCode"></el-input>
+            <el-input v-model="scope.row.tagName"></el-input>
           </template>
         </el-table-column>
-        <el-table-column v-for="(item,index) in editSkuInfo.productAttr" :label="item.name" :key="item.id" align="center">
-          <template slot-scope="scope">
-            {{getProductSkuSp(scope.row,index)}}
-          </template>
-        </el-table-column>
-        <el-table-column label="销售价格" width="80" align="center">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.price"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column label="商品库存" width="80" align="center">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.stock"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column label="库存预警值" width="100" align="center">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.lowStock"></el-input>
-          </template>
-        </el-table-column>
-      </el-table>
+      </el-table> -->
+      <!-- <el-checkbox-group v-model="selectServiceList">
+
+        <el-table style="width: 100%;margin-top: 20px" :data=editGameTagInfo.tagList border>
+          <el-table-column label="名称" width="200" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.tagName"></el-input>
+              <el-checkbox :label="scope.row.tagid">scope.row.tagName</el-checkbox>
+            </template>
+          </el-table-column>
+        </el-table>
+
+      </el-checkbox-group> -->
+
+      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+      <div style="margin: 15px 0;"></div>
+      <el-checkbox-group v-model="checkedTages" @change="handleCheckedCitiesChange">
+        <el-checkbox v-for="city in tages" :label="city" :key="city">{{city}}</el-checkbox>
+      </el-checkbox-group>
+
       <span slot="footer" class="dialog-footer">
-        <el-button @click="editSkuInfo.dialogVisible = false">取 消</el-button>
+        <el-button @click="editGameTagInfo.dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="handleEditSkuConfirm">确 定</el-button>
-      </span> -->
+      </span>
     </el-dialog>
   </div>
 </template>
+
 
 <script>
 // 引入接口
 import {
   fetchList,
-
+  gameTags,
+  gameTagListByGameId,
+  
   // updateDeleteStatus,
   // updateNewStatus,
   // updateRecommendStatus,
@@ -188,12 +187,16 @@ const defaultListQuery = {
   // productCategoryId: null,
   // gameCompon: null,
 };
+
+const cityOptions = ["上海", "北京", "广州", "深圳"];
+
 export default {
   name: "gameList",
   data() {
     return {
-      editSkuInfo: {
-        dialogVisible: false,
+      editGameTagInfo: {
+        dialogVisible: false, // 标签对话框打开
+        tagList: [],
         // productId: null,
         // productSn: "",
         // productAttributeCategoryId: null,
@@ -201,6 +204,10 @@ export default {
         // productAttr: [],
         // keyword: null,
       },
+      checkAll: false, // 复选框
+      checkedTages: [], // 选择的游戏标签
+      tages: [], // 所有的游戏标签
+      isIndeterminate: true,
       // 删除选项
       operates: [
         {
@@ -271,33 +278,31 @@ export default {
     },
   },
   methods: {
-    getProductSkuSp(row, index) {
-      let spData = JSON.parse(row.spData);
-      if (spData != null && index < spData.length) {
-        return spData[index].value;
-      } else {
-        return null;
-      }
+    handleCheckAllChange(val) {
+      this.checkedCities = val ? cityOptions : [];
+      this.isIndeterminate = false;
     },
-    handleShowSkuEditDialog(index, row) {
-      this.editSkuInfo.dialogVisible = true;
-      this.editSkuInfo.productId = row.id;
-      this.editSkuInfo.productSn = row.productSn;
-      this.editSkuInfo.productAttributeCategoryId =
-        row.productAttributeCategoryId;
-      this.editSkuInfo.keyword = null;
-      fetchSkuStockList(row.id, { keyword: this.editSkuInfo.keyword }).then(
-        (response) => {
-          this.editSkuInfo.stockList = response.data;
-        }
-      );
-      if (row.productAttributeCategoryId != null) {
-        fetchProductAttrList(row.productAttributeCategoryId, { type: 0 }).then(
-          (response) => {
-            this.editSkuInfo.productAttr = response.data.list;
-          }
-        );
-      }
+    handleCheckedCitiesChange(value) {
+      let checkedCount = value.length;
+      this.checkAll = checkedCount === this.cities.length;
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.cities.length;
+    },
+    handleShowGameTagEditDialog(gid) {
+      // 显示对话框
+      this.editGameTagInfo.dialogVisible = true;
+
+      // console.log(gid);
+
+      gameTags().then((response) => {
+        console.log(response.data);
+        this.editGameTagInfo.tages = response.data;
+      });
+
+      gameTagListByGameId({ game_id: gid }).then((response) => {
+        console.log(response.data);
+        this.editGameTagInfo.checkedTages = response.data;
+      });
     },
     getList() {
       this.listLoading = true;
@@ -485,6 +490,36 @@ export default {
         });
       });
       this.getList();
+    },
+    handleEditSkuConfirm() {
+      if (
+        this.editSkuInfo.stockList == null ||
+        this.editSkuInfo.stockList.length <= 0
+      ) {
+        this.$message({
+          message: "暂无sku信息",
+          type: "warning",
+          duration: 1000,
+        });
+        return;
+      }
+      this.$confirm("是否要进行修改", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        updateSkuStockList(
+          this.editSkuInfo.productId,
+          this.editSkuInfo.stockList
+        ).then((response) => {
+          this.$message({
+            message: "修改成功",
+            type: "success",
+            duration: 1000,
+          });
+          this.editSkuInfo.dialogVisible = false;
+        });
+      });
     },
   },
 };
