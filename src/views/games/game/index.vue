@@ -125,35 +125,15 @@
     </div>
 
     <el-dialog title="编辑游戏标签" :visible.sync="editGameTagInfo.dialogVisible" width="40%">
-      <!-- <el-table style="width: 100%;margin-top: 20px" :data=editGameTagInfo.tagList border>
-        <el-table-column label="名称" width="200" align="center">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.tagName"></el-input>
-          </template>
-        </el-table-column>
-      </el-table> -->
-      <!-- <el-checkbox-group v-model="selectServiceList">
-
-        <el-table style="width: 100%;margin-top: 20px" :data=editGameTagInfo.tagList border>
-          <el-table-column label="名称" width="200" align="center">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.tagName"></el-input>
-              <el-checkbox :label="scope.row.tagid">scope.row.tagName</el-checkbox>
-            </template>
-          </el-table-column>
-        </el-table>
-
-      </el-checkbox-group> -->
-
-      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+      <el-checkbox :indeterminate="editGameTagInfo.isIndeterminate" v-model="editGameTagInfo.checkAll" @change="handleCheckAllChange">全选</el-checkbox>
       <div style="margin: 15px 0;"></div>
-      <el-checkbox-group v-model="checkedTages" @change="handleCheckedCitiesChange">
-        <el-checkbox v-for="city in tages" :label="city" :key="city">{{city}}</el-checkbox>
+      <el-checkbox-group v-model="editGameTagInfo.checkedTags" @change="handleCheckedTagesChange">
+        <el-checkbox v-for="tag in editGameTagInfo.tags" :label="tag.tagName" :key="tag.id" :value="tag.tagName">{{tag.tagName}}</el-checkbox>
       </el-checkbox-group>
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="editGameTagInfo.dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleEditSkuConfirm">确 定</el-button>
+        <el-button type="primary" @click="handleEditGameTagConfirm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -166,7 +146,7 @@ import {
   fetchList,
   gameTags,
   gameTagListByGameId,
-  
+  updateGameTagList,
   // updateDeleteStatus,
   // updateNewStatus,
   // updateRecommendStatus,
@@ -195,19 +175,14 @@ export default {
   data() {
     return {
       editGameTagInfo: {
+        game_id: 0,
         dialogVisible: false, // 标签对话框打开
-        tagList: [],
-        // productId: null,
-        // productSn: "",
-        // productAttributeCategoryId: null,
-        // stockList: [],
-        // productAttr: [],
-        // keyword: null,
+        checkAll: false, // 复选框
+        checkedTags: [], // 选择的游戏标签
+        tags: [], // 所有的游戏标签
+        isIndeterminate: true,
+        stockList: [], // 复选框暂存数组
       },
-      checkAll: false, // 复选框
-      checkedTages: [], // 选择的游戏标签
-      tages: [], // 所有的游戏标签
-      isIndeterminate: true,
       // 删除选项
       operates: [
         {
@@ -278,32 +253,48 @@ export default {
     },
   },
   methods: {
-    handleCheckAllChange(val) {
-      this.checkedCities = val ? cityOptions : [];
-      this.isIndeterminate = false;
+    // 全选按钮
+    handleCheckAllChange() {
+      if (
+        this.editGameTagInfo.checkedTags.length !=
+        this.editGameTagInfo.tags.length
+      ) {
+        let lag = this.editGameTagInfo.tags.map((item) => item.tagName);
+        this.editGameTagInfo.checkedTags = lag;
+      } else {
+        this.editGameTagInfo.checkedTags = [];
+      }
     },
-    handleCheckedCitiesChange(value) {
+
+    // 选中与取消选中
+    handleCheckedTagesChange(value) {
       let checkedCount = value.length;
-      this.checkAll = checkedCount === this.cities.length;
+      this.checkAll = checkedCount === this.editGameTagInfo.tags.length;
       this.isIndeterminate =
-        checkedCount > 0 && checkedCount < this.cities.length;
+        checkedCount > 0 && checkedCount < this.editGameTagInfo.tags.length;
     },
+
+    // 点击修改game tag
     handleShowGameTagEditDialog(gid) {
       // 显示对话框
       this.editGameTagInfo.dialogVisible = true;
+      this.editGameTagInfo.game_id = gid;
 
       // console.log(gid);
 
       gameTags().then((response) => {
-        console.log(response.data);
-        this.editGameTagInfo.tages = response.data;
+        // console.log(response.data);
+        this.editGameTagInfo.tags = response.data;
       });
 
       gameTagListByGameId({ game_id: gid }).then((response) => {
-        console.log(response.data);
-        this.editGameTagInfo.checkedTages = response.data;
+        // console.log(response.data);
+        this.editGameTagInfo.checkedTags = response.data;
+        this.editGameTagInfo.stockList = response.data;
       });
     },
+
+    // 获取游戏信息
     getList() {
       this.listLoading = true;
       fetchList(this.listQuery).then((response) => {
@@ -312,6 +303,7 @@ export default {
         this.total = response.data.total;
       });
     },
+
     getBrandList() {
       fetchBrandList({ pageNum: 1, pageSize: 100 }).then((response) => {
         this.brandOptions = [];
@@ -491,13 +483,15 @@ export default {
       });
       this.getList();
     },
-    handleEditSkuConfirm() {
+    handleEditGameTagConfirm() {
+      // console.log(this.editGameTagInfo.stockList)
+      // console.log(this.editGameTagInfo.checkedTags)
       if (
-        this.editSkuInfo.stockList == null ||
-        this.editSkuInfo.stockList.length <= 0
+        this.editGameTagInfo.stockList.toString() ==
+        this.editGameTagInfo.checkedTags.toString()
       ) {
         this.$message({
-          message: "暂无sku信息",
+          message: "暂无修改",
           type: "warning",
           duration: 1000,
         });
@@ -508,16 +502,17 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
-        updateSkuStockList(
-          this.editSkuInfo.productId,
-          this.editSkuInfo.stockList
+        // console.log(this.editGameTagInfo.checkedTags)
+        updateGameTagList(
+          this.editGameTagInfo.game_id,
+          { tagNames: this.editGameTagInfo.checkedTags.toString() } 
         ).then((response) => {
           this.$message({
             message: "修改成功",
             type: "success",
             duration: 1000,
           });
-          this.editSkuInfo.dialogVisible = false;
+          this.editGameTagInfo.dialogVisible = false;
         });
       });
     },

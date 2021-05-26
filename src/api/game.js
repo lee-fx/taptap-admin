@@ -28,14 +28,16 @@ export function gameTagListByGameId(params) {
 }
 
 // 获取游戏列表
-export function getCompany(params) {
+
+
+// 修改游戏标签
+export function updateGameTagList(id, data) {
     return request({
-        url: '/company',
-        method: 'get',
-        params: params
+        url: '/game/update/gameTag/' + id,
+        method: 'post',
+        data: data
     })
 }
-
 
 
 export function fetchSimpleList(params) {
