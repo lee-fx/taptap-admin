@@ -17,8 +17,8 @@
             <el-input style="width: 203px" v-model="listQuery.gameName" placeholder="游戏名称"></el-input>
           </el-form-item>
           <el-form-item label="游戏公司：">
-            <el-select v-model="listQuery.brandId" placeholder="请选择" clearable>
-              <el-option v-for="item in brandOptions" :key="item.value" :label="item.label" :value="item.value">
+            <el-select v-model="listQuery.companyId" placeholder="请选择" clearable>
+              <el-option v-for="item in companyOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
@@ -93,15 +93,16 @@
         <el-table-column label="操作" width="160" align="center">
           <template slot-scope="scope">
             <p>
-              <el-button size="mini" @click="handleShowProduct(scope.$index, scope.row)">查看
-              </el-button>
+
               <el-button size="mini" @click="handleUpdateProduct(scope.$index, scope.row)">编辑
+              </el-button>
+              <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除
               </el-button>
             </p>
             <!-- <p>
               <el-button size="mini" @click="handleShowLog(scope.$index, scope.row)">日志
               </el-button>
-              <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除
+              <el-button size="mini" @click="handleShowProduct(scope.$index, scope.row)">查看
               </el-button>
             </p> -->
           </template>
@@ -118,7 +119,6 @@
       </el-button>
     </div>
 
-    // 分页
     <div class="pagination-container">
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" layout="total, sizes,prev, pager, next,jumper" :page-size="listQuery.pageSize" :page-sizes="[10,20,50]" :current-page.sync="listQuery.pageNum" :total="total">
       </el-pagination>
@@ -128,7 +128,7 @@
       <el-checkbox :indeterminate="editGameTagInfo.isIndeterminate" v-model="editGameTagInfo.checkAll" @change="handleCheckAllChange">全选</el-checkbox>
       <div style="margin: 15px 0;"></div>
       <el-checkbox-group v-model="editGameTagInfo.checkedTags" @change="handleCheckedTagesChange">
-        <el-checkbox v-for="tag in editGameTagInfo.tags" :label="tag.tagName" :key="tag.id" :value="tag.tagName">{{tag.tagName}}</el-checkbox>
+        <el-checkbox v-for="tag in editGameTagInfo.tags" :label="tag.id.toString()" :key="tag.id.toString()" :value="tag.id.toString()">{{tag.tagName}}</el-checkbox>
       </el-checkbox-group>
 
       <span slot="footer" class="dialog-footer">
@@ -154,21 +154,20 @@ import {
 } from "@/api/game";
 
 // import { fetchList as fetchProductAttrList } from "@/api/productAttr";
-// import { fetchList as fetchBrandList } from "@/api/brand";
+import { fetchList as fetchCompanyList } from "@/api/company";
 // import { fetchListWithChildren } from "@/api/productCate";
 
 const defaultListQuery = {
   gameName: "",
   pageNum: 1,
   pageSize: 10,
+  companyId: 0,
   // publishStatus: null,
   // verifyStatus: null,
   // productSn: null,
   // productCategoryId: null,
   // gameCompon: null,
 };
-
-const cityOptions = ["上海", "北京", "广州", "深圳"];
 
 export default {
   name: "gameList",
@@ -183,6 +182,11 @@ export default {
         isIndeterminate: true,
         stockList: [], // 复选框暂存数组
       },
+      companyOptions: [],
+      listLoading: true,
+      listQuery: Object.assign({}, defaultListQuery),
+      list: null,
+      total: null,
       // 删除选项
       operates: [
         {
@@ -199,14 +203,11 @@ export default {
         },
       ],
       operateType: null,
-      listQuery: Object.assign({}, defaultListQuery),
-      list: null,
-      total: null,
-      listLoading: true,
+
       selectProductCateValue: null,
       multipleSelection: [],
       productCateOptions: [],
-      brandOptions: [],
+
       publishStatusOptions: [
         {
           value: 1,
@@ -231,7 +232,7 @@ export default {
   },
   created() {
     this.getList();
-    // this.getBrandList();
+    this.getCompanyList();
     // this.getProductCateList();
   },
   watch: {
@@ -304,14 +305,14 @@ export default {
       });
     },
 
-    getBrandList() {
-      fetchBrandList({ pageNum: 1, pageSize: 100 }).then((response) => {
-        this.brandOptions = [];
-        let brandList = response.data.list;
-        for (let i = 0; i < brandList.length; i++) {
-          this.brandOptions.push({
-            label: brandList[i].name,
-            value: brandList[i].id,
+    getCompanyList() {
+      fetchCompanyList({ pageNum: 1, pageSize: 100 }).then((response) => {
+        this.companyOptions = [];
+        let companyList = response.data.list;
+        for (let i = 0; i < companyList.length; i++) {
+          this.companyOptions.push({
+            label: companyList[i].name,
+            value: companyList[i].id,
           });
         }
       });
@@ -503,10 +504,10 @@ export default {
         type: "warning",
       }).then(() => {
         // console.log(this.editGameTagInfo.checkedTags)
-        updateGameTagList(
-          this.editGameTagInfo.game_id,
-          { tagNames: this.editGameTagInfo.checkedTags.toString() } 
-        ).then((response) => {
+        updateGameTagList(this.editGameTagInfo.game_id, {
+          tagNames: this.editGameTagInfo.checkedTags.toString(),
+        }).then((response) => {
+          this.editGameTagInfo.stockList = this.editGameTagInfo.checkedTags;
           this.$message({
             message: "修改成功",
             type: "success",

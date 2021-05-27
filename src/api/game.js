@@ -40,6 +40,10 @@ export function updateGameTagList(id, data) {
 }
 
 
+
+
+
+
 export function fetchSimpleList(params) {
     return request({
         url: '/game/simpleList',
