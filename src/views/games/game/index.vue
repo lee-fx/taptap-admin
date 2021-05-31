@@ -57,7 +57,7 @@
         <el-table-column label="状态" width="140" align="center">
           <template slot-scope="scope">
             <p>
-              <el-switch @change="handlePublishStatusChange(scope.$index, scope.row)" :active-value="0" :inactive-value="1" v-model="scope.row.status">
+              <el-switch @change="handleGameStatusChange(scope.$index, scope.row)" :active-value="0" :inactive-value="1" v-model="scope.row.status">
               </el-switch>
             </p>
             <!-- <p>新品：
@@ -147,10 +147,11 @@ import {
   gameTags,
   gameTagListByGameId,
   updateGameTagList,
+  updateGameStatus,
   // updateDeleteStatus,
   // updateNewStatus,
   // updateRecommendStatus,
-  // updatePublishStatus,
+
 } from "@/api/game";
 
 // import { fetchList as fetchProductAttrList } from "@/api/productAttr";
@@ -190,12 +191,12 @@ export default {
       // 删除选项
       operates: [
         {
-          label: "游戏上架",
-          value: "publishOn",
+          label: "游戏关闭",
+          value: "gameOff",
         },
         {
-          label: "游戏下架",
-          value: "publishOff",
+          label: "游戏开启",
+          value: "gameOn",
         },
         {
           label: "移入回收站",
@@ -305,6 +306,7 @@ export default {
       });
     },
 
+    // 获取公司列表
     getCompanyList() {
       fetchCompanyList({ pageNum: 1, pageSize: 100 }).then((response) => {
         this.companyOptions = [];
@@ -317,14 +319,19 @@ export default {
         }
       });
     },
+
+    // 获取游戏列表
     handleSearchList() {
       this.listQuery.pageNum = 1;
       this.getList();
     },
+
     // 添加游戏
     handleAddGame() {
       this.$router.push({ path: "/games/addGame" });
     },
+
+    // 
     handleBatchOperate() {
       if (this.operateType == null) {
         this.$message({
@@ -336,7 +343,7 @@ export default {
       }
       if (this.multipleSelection == null || this.multipleSelection.length < 1) {
         this.$message({
-          message: "请选择要操作的商品",
+          message: "请选择要操作的游戏",
           type: "warning",
           duration: 1000,
         });
@@ -351,12 +358,13 @@ export default {
         for (let i = 0; i < this.multipleSelection.length; i++) {
           ids.push(this.multipleSelection[i].id);
         }
+        console.log(this.operateType)
         switch (this.operateType) {
           case this.operates[0].value:
-            this.updatePublishStatus(1, ids);
+            this.updateGameStatus(1, ids);
             break;
           case this.operates[1].value:
-            this.updatePublishStatus(0, ids);
+            this.updateGameStatus(0, ids);
             break;
           case this.operates[2].value:
             this.updateRecommendStatus(1, ids);
@@ -393,10 +401,10 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    handlePublishStatusChange(index, row) {
+    handleGameStatusChange(index, row) {
       let ids = [];
       ids.push(row.id);
-      this.updatePublishStatus(row.publishStatus, ids);
+      this.updateGameStatus(row.status, ids);
     },
     handleNewStatusChange(index, row) {
       let ids = [];
@@ -435,11 +443,11 @@ export default {
     handleShowLog(index, row) {
       console.log("handleShowLog", row);
     },
-    updatePublishStatus(publishStatus, ids) {
+    updateGameStatus(gameStatus, ids) {
       let params = new URLSearchParams();
       params.append("ids", ids);
-      params.append("publishStatus", publishStatus);
-      updatePublishStatus(params).then((response) => {
+      params.append("gameStatus", gameStatus);
+      updateGameStatus(params).then((response) => {
         this.$message({
           message: "修改成功",
           type: "success",

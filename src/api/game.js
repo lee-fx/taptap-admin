@@ -39,8 +39,15 @@ export function updateGameTagList(id, data) {
     })
 }
 
-
-
+// 修改游戏状态
+export function updateGameStatus(params) {
+    return request({
+        url: '/game/update/gameStatus',
+        method: 'post',
+        params: params
+    })
+}
+ 
 
 
 
@@ -71,14 +78,6 @@ export function updateNewStatus(params) {
 export function updateRecommendStatus(params) {
     return request({
         url: '/game/update/recommendStatus',
-        method: 'post',
-        params: params
-    })
-}
-
-export function updatePublishStatus(params) {
-    return request({
-        url: '/game/update/publishStatus',
         method: 'post',
         params: params
     })
