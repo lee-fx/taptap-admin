@@ -60,14 +60,6 @@
               <el-switch @change="handleGameStatusChange(scope.$index, scope.row)" :active-value="0" :inactive-value="1" v-model="scope.row.status">
               </el-switch>
             </p>
-            <!-- <p>新品：
-              <el-switch @change="handleNewStatusChange(scope.$index, scope.row)" :active-value="1" :inactive-value="0" v-model="scope.row.newStatus">
-              </el-switch>
-            </p>
-            <p>推荐：
-              <el-switch @change="handleRecommendStatusChange(scope.$index, scope.row)" :active-value="1" :inactive-value="0" v-model="scope.row.recommandStatus">
-              </el-switch>
-            </p> -->
           </template>
         </el-table-column>
         <el-table-column label="评星" width="100" align="center">
@@ -99,12 +91,6 @@
               <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除
               </el-button>
             </p>
-            <!-- <p>
-              <el-button size="mini" @click="handleShowLog(scope.$index, scope.row)">日志
-              </el-button>
-              <el-button size="mini" @click="handleShowProduct(scope.$index, scope.row)">查看
-              </el-button>
-            </p> -->
           </template>
         </el-table-column>
       </el-table>
@@ -148,26 +134,16 @@ import {
   gameTagListByGameId,
   updateGameTagList,
   updateGameStatus,
-  // updateDeleteStatus,
-  // updateNewStatus,
-  // updateRecommendStatus,
 
 } from "@/api/game";
 
-// import { fetchList as fetchProductAttrList } from "@/api/productAttr";
 import { fetchList as fetchCompanyList } from "@/api/company";
-// import { fetchListWithChildren } from "@/api/productCate";
 
 const defaultListQuery = {
   gameName: "",
   pageNum: 1,
   pageSize: 10,
   companyId: 0,
-  // publishStatus: null,
-  // verifyStatus: null,
-  // productSn: null,
-  // productCategoryId: null,
-  // gameCompon: null,
 };
 
 export default {
@@ -209,26 +185,6 @@ export default {
       multipleSelection: [],
       productCateOptions: [],
 
-      publishStatusOptions: [
-        {
-          value: 1,
-          label: "上架",
-        },
-        {
-          value: 0,
-          label: "下架",
-        },
-      ],
-      verifyStatusOptions: [
-        {
-          value: 1,
-          label: "审核通过",
-        },
-        {
-          value: 0,
-          label: "未审核",
-        },
-      ],
     };
   },
   created() {
@@ -367,20 +323,6 @@ export default {
             this.updateGameStatus(0, ids);
             break;
           case this.operates[2].value:
-            this.updateRecommendStatus(1, ids);
-            break;
-          case this.operates[3].value:
-            this.updateRecommendStatus(0, ids);
-            break;
-          case this.operates[4].value:
-            this.updateNewStatus(1, ids);
-            break;
-          case this.operates[5].value:
-            this.updateNewStatus(0, ids);
-            break;
-          case this.operates[6].value:
-            break;
-          case this.operates[7].value:
             this.updateDeleteStatus(1, ids);
             break;
           default:
@@ -389,6 +331,8 @@ export default {
         this.getList();
       });
     },
+
+    // 分页
     handleSizeChange(val) {
       this.listQuery.pageNum = 1;
       this.listQuery.pageSize = val;
@@ -398,28 +342,19 @@ export default {
       this.listQuery.pageNum = val;
       this.getList();
     },
+
+    // 全选
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+
+    // 批量操作
     handleGameStatusChange(index, row) {
       let ids = [];
       ids.push(row.id);
       this.updateGameStatus(row.status, ids);
     },
-    handleNewStatusChange(index, row) {
-      let ids = [];
-      ids.push(row.id);
-      this.updateNewStatus(row.newStatus, ids);
-    },
-    handleRecommendStatusChange(index, row) {
-      let ids = [];
-      ids.push(row.id);
-      this.updateRecommendStatus(row.recommandStatus, ids);
-    },
-    handleResetSearch() {
-      this.selectProductCateValue = [];
-      this.listQuery = Object.assign({}, defaultListQuery);
-    },
+
     handleDelete(index, row) {
       this.$confirm("是否要进行删除操作?", "提示", {
         confirmButtonText: "确定",
@@ -434,15 +369,8 @@ export default {
     handleUpdateProduct(index, row) {
       this.$router.push({ path: "/pms/updateProduct", query: { id: row.id } });
     },
-    handleShowProduct(index, row) {
-      console.log("handleShowProduct", row);
-    },
-    handleShowVerifyDetail(index, row) {
-      console.log("handleShowVerifyDetail", row);
-    },
-    handleShowLog(index, row) {
-      console.log("handleShowLog", row);
-    },
+    
+    // 修改游戏状态
     updateGameStatus(gameStatus, ids) {
       let params = new URLSearchParams();
       params.append("ids", ids);
@@ -455,30 +383,7 @@ export default {
         });
       });
     },
-    updateNewStatus(newStatus, ids) {
-      let params = new URLSearchParams();
-      params.append("ids", ids);
-      params.append("newStatus", newStatus);
-      updateNewStatus(params).then((response) => {
-        this.$message({
-          message: "修改成功",
-          type: "success",
-          duration: 1000,
-        });
-      });
-    },
-    updateRecommendStatus(recommendStatus, ids) {
-      let params = new URLSearchParams();
-      params.append("ids", ids);
-      params.append("recommendStatus", recommendStatus);
-      updateRecommendStatus(params).then((response) => {
-        this.$message({
-          message: "修改成功",
-          type: "success",
-          duration: 1000,
-        });
-      });
-    },
+
     updateDeleteStatus(deleteStatus, ids) {
       let params = new URLSearchParams();
       params.append("ids", ids);
@@ -492,9 +397,9 @@ export default {
       });
       this.getList();
     },
+
+    // 修改游戏标签
     handleEditGameTagConfirm() {
-      // console.log(this.editGameTagInfo.stockList)
-      // console.log(this.editGameTagInfo.checkedTags)
       if (
         this.editGameTagInfo.stockList.toString() ==
         this.editGameTagInfo.checkedTags.toString()
