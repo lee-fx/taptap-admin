@@ -7,6 +7,10 @@ export function fetchList(params) {
     params:params
   })
 }
+
+
+
+
 export function createBrand(data) {
   return request({
     url:'/brand/create',

@@ -34,7 +34,7 @@
 
 <script>
 import { fetchListWithChildren } from "@/api/productCate";
-import { fetchList as fetchBrandList } from "@/api/brand";
+import { fetchList as fetchCompanyList } from "@/api/company";
 import { getProduct } from "@/api/product";
 
 export default {
@@ -52,7 +52,7 @@ export default {
       //选中商品分类的值
       selectProductCateValue: [],
       productCateOptions: [],
-      brandOptions: [],
+      companyOptions: [],
       rules: {
         name: [
           { required: true, message: "请输入游戏名称", trigger: "blur" },
@@ -83,7 +83,7 @@ export default {
   },
   created() {
     this.getProductCateList();
-    this.getBrandList();
+    this.getGameCompanyList();
   },
   computed: {
     //商品的编号
@@ -141,14 +141,14 @@ export default {
         }
       });
     },
-    getBrandList() {
-      fetchBrandList({ pageNum: 1, pageSize: 100 }).then((response) => {
-        this.brandOptions = [];
-        let brandList = response.data.list;
-        for (let i = 0; i < brandList.length; i++) {
-          this.brandOptions.push({
-            label: brandList[i].name,
-            value: brandList[i].id,
+    getGameCompanyList() {
+      fetchCompanyList({ pageNum: 1, pageSize: 100 }).then((response) => {
+        this.CompanyOptions = [];
+        let gameList = response.data.list;
+        for (let i = 0; i < gameList.length; i++) {
+          this.CompanyOptions.push({
+            label: gameList[i].name,
+            value: gameList[i].id,
           });
         }
       });

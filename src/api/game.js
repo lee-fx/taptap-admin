@@ -27,8 +27,6 @@ export function gameTagListByGameId(params) {
     })
 }
 
-// 获取游戏列表
-
 
 // 修改游戏标签
 export function updateGameTagList(id, data) {
@@ -47,38 +45,11 @@ export function updateGameStatus(params) {
         params: params
     })
 }
- 
-
-
 
 export function fetchSimpleList(params) {
     return request({
         url: '/game/simpleList',
         method: 'get',
-        params: params
-    })
-}
-
-export function updateDeleteStatus(params) {
-    return request({
-        url: '/game/update/deleteStatus',
-        method: 'post',
-        params: params
-    })
-}
-
-export function updateNewStatus(params) {
-    return request({
-        url: '/game/update/newStatus',
-        method: 'post',
-        params: params
-    })
-}
-
-export function updateRecommendStatus(params) {
-    return request({
-        url: '/game/update/recommendStatus',
-        method: 'post',
         params: params
     })
 }

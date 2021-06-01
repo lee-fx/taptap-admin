@@ -21,11 +21,15 @@ import GameInfoDetail from "./GameInfoDetail";
 import GameSaleDetail from "./GameUploadDetail";
 import GameAttrDetail from "./GameAttrDetail";
 import GameRelationDetail from "./GameRelationDetail";
-import { createProduct, getProduct, updateProduct } from "@/api/product";
+import { createGame, getGame, updateGame } from "@/api/game";
 
 const defaultGameParam = {
-  albumPics: "",
+
+  // 游戏名称
+  name: "",
   brandId: null,
+
+  albumPics: "",
   brandName: "",
   deleteStatus: 0,
   description: "",
@@ -42,7 +46,7 @@ const defaultGameParam = {
   giftGrowth: 0,
   keywords: "",
   lowStock: 0,
-  name: "",
+
   newStatus: 0,
   note: "",
   originalPrice: 0,
@@ -85,7 +89,7 @@ const defaultGameParam = {
   weight: 0,
 };
 export default {
-  name: "ProductDetail",
+  name: "GameDetail",
   components: {
     GameInfoDetail,
     GameSaleDetail,
@@ -107,7 +111,7 @@ export default {
   },
   created() {
     if (this.isEdit) {
-      getProduct(this.$route.query.id).then((response) => {
+      getGame(this.$route.query.id).then((response) => {
         this.gameParam = response.data;
       });
     }
@@ -139,7 +143,7 @@ export default {
         type: "warning",
       }).then(() => {
         if (isEdit) {
-          updateProduct(this.$route.query.id, this.gameParam).then(
+          updateGame(this.$route.query.id, this.gameParam).then(
             (response) => {
               this.$message({
                 type: "success",
@@ -150,7 +154,7 @@ export default {
             }
           );
         } else {
-          createProduct(this.gameParam).then((response) => {
+          createGame(this.gameParam).then((response) => {
             this.$message({
               type: "success",
               message: "提交成功",

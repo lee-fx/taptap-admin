@@ -48,12 +48,11 @@
             <p>{{scope.row.name}}</p>
           </template>
         </el-table-column>
-        <!-- <el-table-column label="游戏公司" width="120" align="center">
+        <el-table-column label="游戏公司" align="center">
           <template slot-scope="scope">
             <p>{{scope.row.company}}</p>
-            <p>简称：{{scope.row.company_tag}}</p>
           </template>
-        </el-table-column> -->
+        </el-table-column>
         <el-table-column label="状态" width="140" align="center">
           <template slot-scope="scope">
             <p>
@@ -134,7 +133,6 @@ import {
   gameTagListByGameId,
   updateGameTagList,
   updateGameStatus,
-
 } from "@/api/game";
 
 import { fetchList as fetchCompanyList } from "@/api/company";
@@ -184,7 +182,6 @@ export default {
       selectProductCateValue: null,
       multipleSelection: [],
       productCateOptions: [],
-
     };
   },
   created() {
@@ -287,7 +284,7 @@ export default {
       this.$router.push({ path: "/games/addGame" });
     },
 
-    // 
+    //
     handleBatchOperate() {
       if (this.operateType == null) {
         this.$message({
@@ -314,7 +311,7 @@ export default {
         for (let i = 0; i < this.multipleSelection.length; i++) {
           ids.push(this.multipleSelection[i].id);
         }
-        console.log(this.operateType)
+        console.log(this.operateType);
         switch (this.operateType) {
           case this.operates[0].value:
             this.updateGameStatus(1, ids);
@@ -369,7 +366,7 @@ export default {
     handleUpdateProduct(index, row) {
       this.$router.push({ path: "/pms/updateProduct", query: { id: row.id } });
     },
-    
+
     // 修改游戏状态
     updateGameStatus(gameStatus, ids) {
       let params = new URLSearchParams();
@@ -430,6 +427,7 @@ export default {
         });
       });
     },
+
   },
 };
 </script>
