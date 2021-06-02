@@ -1,16 +1,16 @@
 <template>
   <div style="margin-top: 50px">
-    <el-form :model="value" :rules="rules" ref="productInfoForm" label-width="120px" style="width: 600px" size="small">
+    <el-form :model="value" :rules="rules" ref="gameInfoForm" label-width="120px" style="width: 600px" size="small">
       <el-form-item label="游戏名称：" prop="name">
         <el-input v-model="value.name"></el-input>
       </el-form-item>
-      <el-form-item label="游戏公司：" prop="brandId">
-        <el-select v-model="value.brandId" @change="handleBrandChange" placeholder="请选择">
-          <el-option v-for="item in brandOptions" :key="item.value" :label="item.label" :value="item.value">
+      <el-form-item label="游戏公司：" prop="tag_id">
+        <el-select v-model="value.tag_id" @change="handleGameChange" placeholder="请选择">
+          <el-option v-for="item in companyOptions" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="游戏介绍：">
+      <el-form-item label="游戏介绍：" prop="description">
         <el-input :autoSize="true" v-model="value.description" type="textarea" placeholder="请输入内容"></el-input>
       </el-form-item>
       <el-form-item label="初始评星：">
@@ -22,11 +22,19 @@
       <el-form-item label="游戏包版本：">
         <el-input v-model="value.game_version"></el-input>
       </el-form-item>
-      <el-form-item label="状态：">
-        <el-input v-model="value.status"></el-input>
+      <el-form-item label="游戏状态：">
+        <el-switch v-model="value.status" :active-value="1" :inactive-value="0">
+        </el-switch>
+      </el-form-item>
+      <el-form-item label="游戏标签：">
+        <el-checkbox-group v-model="selectTagList">
+          <el-checkbox :label="1">跑酷</el-checkbox>
+          <el-checkbox :label="2">三消</el-checkbox>
+          <el-checkbox :label="3">休闲</el-checkbox>
+        </el-checkbox-group>
       </el-form-item>
       <el-form-item style="text-align: center">
-        <el-button type="primary" size="medium" @click="handleNext('productInfoForm')">下一步，上传游戏信息</el-button>
+        <el-button type="primary" size="medium" @click="handleNext('gameInfoForm')">下一步，上传游戏信息</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -38,7 +46,7 @@ import { fetchList as fetchCompanyList } from "@/api/company";
 import { getProduct } from "@/api/product";
 
 export default {
-  name: "ProductInfoDetail",
+  name: "GameInfoDetail",
   props: {
     value: Object,
     isEdit: {
@@ -49,9 +57,7 @@ export default {
   data() {
     return {
       hasEditCreated: false,
-      //选中商品分类的值
-      selectProductCateValue: [],
-      productCateOptions: [],
+      // 公司列表
       companyOptions: [],
       rules: {
         name: [
@@ -63,107 +69,75 @@ export default {
             trigger: "blur",
           },
         ],
-        subTitle: [
-          { required: true, message: "请输入商品副标题", trigger: "blur" },
-        ],
-        productCategoryId: [
-          { required: true, message: "请选择商品分类", trigger: "blur" },
-        ],
-        brandId: [
-          { required: true, message: "请选择商品品牌", trigger: "blur" },
-        ],
         description: [
-          { required: true, message: "请输入商品介绍", trigger: "blur" },
-        ],
-        requiredProp: [
-          { required: true, message: "该项为必填项", trigger: "blur" },
+          { required: true, message: "请输入游戏介绍", trigger: "blur" },
         ],
       },
     };
   },
   created() {
-    this.getProductCateList();
+    // this.getProductCateList();
     this.getGameCompanyList();
   },
   computed: {
     //商品的编号
-    productId() {
+    gameId() {
       return this.value.id;
+    },
+    //选中的服务保证
+    selectTagList: {
+      get() {
+        let list = [];
+        if (
+          this.value.gameTagIds === undefined ||
+          this.value.gameTagIds == null ||
+          this.value.gameTagIds === ""
+        )
+          return list;
+        let ids = this.value.gameTagIds.split(",");
+        for (let i = 0; i < ids.length; i++) {
+          list.push(Number(ids[i]));
+        }
+        return list;
+      },
+      set(newValue) {
+        let gameTagIds = "";
+        if (newValue != null && newValue.length > 0) {
+          for (let i = 0; i < newValue.length; i++) {
+            gameTagIds += newValue[i] + ",";
+          }
+          if (gameTagIds.endsWith(",")) {
+            gameTagIds = gameTagIds.substr(0, gameTagIds.length - 1);
+          }
+          this.value.gameTagIds = gameTagIds;
+        } else {
+          this.value.gameTagIds = null;
+        }
+      },
     },
   },
   watch: {
-    productId: function (newValue) {
+    gameId: function (newValue) {
       if (!this.isEdit) return;
       if (this.hasEditCreated) return;
       if (newValue === undefined || newValue == null || newValue === 0) return;
       this.handleEditCreated();
     },
-    selectProductCateValue: function (newValue) {
-      if (newValue != null && newValue.length === 2) {
-        this.value.productCategoryId = newValue[1];
-        this.value.productCategoryName = this.getCateNameById(
-          this.value.productCategoryId
-        );
-      } else {
-        this.value.productCategoryId = null;
-        this.value.productCategoryName = null;
-      }
-    },
   },
   methods: {
     //处理编辑逻辑
-    handleEditCreated() {
-      if (this.value.productCategoryId != null) {
-        this.selectProductCateValue.push(this.value.cateParentId);
-        this.selectProductCateValue.push(this.value.productCategoryId);
-      }
-      this.hasEditCreated = true;
-    },
-    getProductCateList() {
-      fetchListWithChildren().then((response) => {
-        let list = response.data;
-        this.productCateOptions = [];
-        for (let i = 0; i < list.length; i++) {
-          let children = [];
-          if (list[i].children != null && list[i].children.length > 0) {
-            for (let j = 0; j < list[i].children.length; j++) {
-              children.push({
-                label: list[i].children[j].name,
-                value: list[i].children[j].id,
-              });
-            }
-          }
-          this.productCateOptions.push({
-            label: list[i].name,
-            value: list[i].id,
-            children: children,
-          });
-        }
-      });
-    },
     getGameCompanyList() {
       fetchCompanyList({ pageNum: 1, pageSize: 100 }).then((response) => {
-        this.CompanyOptions = [];
+        this.companyOptions = [];
         let gameList = response.data.list;
+        // console.log(gameList)
         for (let i = 0; i < gameList.length; i++) {
-          this.CompanyOptions.push({
+          this.companyOptions.push({
             label: gameList[i].name,
             value: gameList[i].id,
           });
         }
       });
-    },
-    getCateNameById(id) {
-      let name = null;
-      for (let i = 0; i < this.productCateOptions.length; i++) {
-        for (let j = 0; j < this.productCateOptions[i].children.length; j++) {
-          if (this.productCateOptions[i].children[j].value === id) {
-            name = this.productCateOptions[i].children[j].label;
-            return name;
-          }
-        }
-      }
-      return name;
     },
     handleNext(formName) {
       this.$refs[formName].validate((valid) => {
@@ -179,15 +153,22 @@ export default {
         }
       });
     },
-    handleBrandChange(val) {
-      let brandName = "";
-      for (let i = 0; i < this.brandOptions.length; i++) {
-        if (this.brandOptions[i].value === val) {
-          brandName = this.brandOptions[i].label;
+    handleGameChange(val) {
+      let companyName = "";
+      for (let i = 0; i < this.companyOptions.length; i++) {
+        if (this.companyOptions[i].value === val) {
+          companyName = this.companyOptions[i].label;
           break;
         }
       }
-      this.value.brandName = brandName;
+      this.value.companyName = companyName;
+    },
+    handleEditCreated() {
+      let ids = this.value.gameTagIds.split(",");
+      console.log("handleEditCreated", ids);
+      for (let i = 0; i < ids.length; i++) {
+        this.selectTagList.push(Number(ids[i]));
+      }
     },
   },
 };
