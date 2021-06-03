@@ -26,12 +26,13 @@
         <el-switch v-model="value.status" :active-value="1" :inactive-value="0">
         </el-switch>
       </el-form-item>
+
       <el-form-item label="游戏标签：">
+
         <el-checkbox-group v-model="selectTagList">
-          <el-checkbox :label="1">跑酷</el-checkbox>
-          <el-checkbox :label="2">三消</el-checkbox>
-          <el-checkbox :label="3">休闲</el-checkbox>
+          <el-checkbox v-for="tag in tags" :label="tag.id" :key="tag.id" :value="tag.id">{{tag.tagName}}</el-checkbox>
         </el-checkbox-group>
+
       </el-form-item>
       <el-form-item style="text-align: center">
         <el-button type="primary" size="medium" @click="handleNext('gameInfoForm')">下一步，上传游戏信息</el-button>
@@ -43,7 +44,7 @@
 <script>
 import { fetchListWithChildren } from "@/api/productCate";
 import { fetchList as fetchCompanyList } from "@/api/company";
-import { getProduct } from "@/api/product";
+import { getGame, gameTags } from "@/api/game";
 
 export default {
   name: "GameInfoDetail",
@@ -59,6 +60,10 @@ export default {
       hasEditCreated: false,
       // 公司列表
       companyOptions: [],
+
+      checkedTags: [], // 选择的游戏标签
+      tags: [], // 所有的游戏标签
+
       rules: {
         name: [
           { required: true, message: "请输入游戏名称", trigger: "blur" },
@@ -76,8 +81,10 @@ export default {
     };
   },
   created() {
-    // this.getProductCateList();
-    this.getGameCompanyList();
+    gameTags().then((response) => {
+      // console.log(response.data);
+      this.tags = response.data;
+    });
   },
   computed: {
     //商品的编号
@@ -89,29 +96,29 @@ export default {
       get() {
         let list = [];
         if (
-          this.value.gameTagIds === undefined ||
-          this.value.gameTagIds == null ||
-          this.value.gameTagIds === ""
+          this.value.game_tag_ids === undefined ||
+          this.value.game_tag_ids == null ||
+          this.value.game_tag_ids === ""
         )
           return list;
-        let ids = this.value.gameTagIds.split(",");
+        let ids = this.value.game_tag_ids.split(",");
         for (let i = 0; i < ids.length; i++) {
           list.push(Number(ids[i]));
         }
         return list;
       },
       set(newValue) {
-        let gameTagIds = "";
+        let game_tag_ids = "";
         if (newValue != null && newValue.length > 0) {
           for (let i = 0; i < newValue.length; i++) {
-            gameTagIds += newValue[i] + ",";
+            game_tag_ids += newValue[i] + ",";
           }
-          if (gameTagIds.endsWith(",")) {
-            gameTagIds = gameTagIds.substr(0, gameTagIds.length - 1);
+          if (game_tag_ids.endsWith(",")) {
+            game_tag_ids = game_tag_ids.substr(0, game_tag_ids.length - 1);
           }
-          this.value.gameTagIds = gameTagIds;
+          this.value.game_tag_ids = game_tag_ids;
         } else {
-          this.value.gameTagIds = null;
+          this.value.game_tag_ids = null;
         }
       },
     },
@@ -162,13 +169,6 @@ export default {
         }
       }
       this.value.companyName = companyName;
-    },
-    handleEditCreated() {
-      let ids = this.value.gameTagIds.split(",");
-      console.log("handleEditCreated", ids);
-      for (let i = 0; i < ids.length; i++) {
-        this.selectTagList.push(Number(ids[i]));
-      }
     },
   },
 };
