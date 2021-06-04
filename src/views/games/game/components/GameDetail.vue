@@ -28,14 +28,17 @@ const defaultGameParam = {
   // 游戏基础信息
   id: 0,
   name: "",
-  tag_id: "未选择",
-  mana: 0,
-  attention: 0,
+  mana: "0",
+  attention: "0",
   game_version: "1.0.1",
   status: 0,
   game_tag_ids: "",
   image_url: "",
-  image_remote_url: "",
+  image: {},
+  file: {},
+  company_name: "未选择",
+  company_id:0,
+  game_size: "0",
 
   // 游戏文件信息
 

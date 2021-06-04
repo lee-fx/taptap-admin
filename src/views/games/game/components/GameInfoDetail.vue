@@ -4,8 +4,8 @@
       <el-form-item label="游戏名称：" prop="name">
         <el-input v-model="value.name"></el-input>
       </el-form-item>
-      <el-form-item label="游戏公司：" prop="tag_id">
-        <el-select v-model="value.tag_id" @change="handleGameChange" placeholder="请选择">
+      <el-form-item label="游戏公司：" prop="company_name">
+        <el-select v-model="value.company_name" @change="handleGameChange" placeholder="请选择">
           <el-option v-for="item in companyOptions" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import { fetchListWithChildren } from "@/api/productCate";
 import { fetchList as fetchCompanyList } from "@/api/company";
 import { getGame, gameTags } from "@/api/game";
 
@@ -85,6 +84,7 @@ export default {
       // console.log(response.data);
       this.tags = response.data;
     });
+    this.getGameCompanyList();
   },
   computed: {
     //商品的编号
@@ -162,13 +162,16 @@ export default {
     },
     handleGameChange(val) {
       let companyName = "";
+      let companyId = "";
       for (let i = 0; i < this.companyOptions.length; i++) {
         if (this.companyOptions[i].value === val) {
           companyName = this.companyOptions[i].label;
+          companyId = this.companyOptions[i].value;
           break;
         }
       }
-      this.value.companyName = companyName;
+      this.value.company_name = companyName;
+      this.value.company_id = companyId;
     },
   },
 };

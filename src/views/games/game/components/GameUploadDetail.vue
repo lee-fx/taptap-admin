@@ -10,7 +10,7 @@
       </el-form-item>
 
       <el-form-item label="游戏包：">
-        <el-upload :action="handleBeforUploadApk()" :on-preview="handlePreview" :before-upload="beforeFileUpload" :on-remove="handleRemove" :before-remove="beforeRemove" multiple :limit="3" :on-exceed="handleExceed" :file-list="fileList">
+        <el-upload :action="handleBeforUploadApk()" :on-preview="handlePreview" :before-upload="beforeFileUpload" :on-success="handleApkSuccess" :on-remove="handleRemove" :before-remove="beforeRemove" multiple :limit="3" :on-exceed="handleExceed" :file-list="value.fileList">
           <el-button size="small" type="primary">点击上传</el-button>
           <div slot="tip" class="el-upload__tip">只能上传apk文件，且不超过200Mb</div>
         </el-upload>
@@ -29,13 +29,13 @@
 </template>
 
 <script>
-import SingleUpload from "@/components/Upload/singleUpload";
-import MultiUpload from "@/components/Upload/multiUpload";
-import Tinymce from "@/components/Tinymce";
+// import SingleUpload from "@/components/Upload/singleUpload";
+// import MultiUpload from "@/components/Upload/multiUpload";
+// import Tinymce from "@/components/Tinymce";
 
 export default {
   name: "GameUploadDetail",
-  components: { SingleUpload, MultiUpload, Tinymce },
+  components: { },
   props: {
     value: Object,
     isEdit: {
@@ -45,13 +45,13 @@ export default {
   },
   data() {
     return {
-      fileList: [
+      // fileList: [
         // {
         //   name: "food.jpeg",
         //   url:
         //     "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
         // },
-      ],
+      // ],
     };
   },
   computed: {},
@@ -59,10 +59,16 @@ export default {
   watch: {},
   methods: {
     handleAvatarSuccess(res, file) {
-      console.log(res);
+      // console.log(res);
       this.value.image_url = URL.createObjectURL(file.raw);
-      this.value.image_remote_url = res.data;
+      this.value.image = res.data;
     },
+
+    handleApkSuccess(res, file) {
+      // console.log(res);
+      this.value.file = res.data;
+    },
+  
 
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";
@@ -98,6 +104,10 @@ export default {
       if (!isLt200M) {
         this.$message.error("上传头像图片大小不能超过 200MB!");
       }
+      
+      this.value.game_size = (Math.round((file.size / 1024 /1024)*100)/100).toString();
+      // console.log(this.value.game_size)
+
       return isApk && isLt200M;
     },
 
