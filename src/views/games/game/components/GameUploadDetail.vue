@@ -4,7 +4,7 @@
       
       <el-form-item label="游戏icon：">
         <el-upload class="avatar-uploader" :action="handleBeforUploadImg()" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-          <img v-if="value.image_url" :src="value.image_url" class="avatar">
+          <img v-if="value.image.url" :src="value.image.url" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </el-form-item>
@@ -60,7 +60,7 @@ export default {
   methods: {
     handleAvatarSuccess(res, file) {
       // console.log(res);
-      this.value.image_url = URL.createObjectURL(file.raw);
+      // this.value.image_url = URL.createObjectURL(file.raw);
       this.value.image = res.data;
     },
 

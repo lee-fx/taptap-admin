@@ -19,7 +19,6 @@ import {
   createGame,
   getGame,
   updateGame,
-  gameTags,
   gameTagListByGameId,
 } from "@/api/game";
 
@@ -30,19 +29,14 @@ const defaultGameParam = {
   name: "",
   mana: "0",
   attention: "0",
-  game_version: "1.0.1",
-  status: 0,
-  game_tag_ids: "",
-  image_url: "",
   image: {},
   file: {},
-  company_name: "未选择",
-  company_id:0,
+  description: "",
   game_size: "0",
-
-  // 游戏文件信息
-
-  // 游戏属性信息
+  game_version: "1.0.1",
+  status: 0,
+  company_id: 0,
+  game_tag_ids: "",
 };
 export default {
   name: "GameDetail",
@@ -68,7 +62,7 @@ export default {
       getGame(this.$route.query.id).then((response) => {
         this.gameParam = response.data;
       });
-      this.getGameCompanyList();
+      // this.getGameCompanyList();
       gameTagListByGameId({ game_id: this.$route.query.id }).then(
         (response) => {
           // console.log(response.data);

@@ -33,7 +33,7 @@
       </el-button>
     </el-card>
     <div class="table-container">
-      <el-table ref="productTable" :data="list" style="width: 100%" @selection-change="handleSelectionChange" v-loading="listLoading" border>
+      <el-table ref="gameTable" :data="list" style="width: 100%" @selection-change="handleSelectionChange" v-loading="listLoading" border>
 
         <el-table-column type="selection" width="60" align="center"></el-table-column>
 
@@ -85,7 +85,7 @@
           <template slot-scope="scope">
             <p>
 
-              <el-button size="mini" @click="handleUpdateProduct(scope.$index, scope.row)">编辑
+              <el-button size="mini" @click="handleUpdateGame(scope.$index, scope.row)">编辑
               </el-button>
               <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除
               </el-button>
@@ -141,7 +141,7 @@ const defaultListQuery = {
   gameName: "",
   pageNum: 1,
   pageSize: 10,
-  companyId: 0,
+  companyId: -1,
 };
 
 export default {
@@ -173,30 +173,19 @@ export default {
           value: "gameOn",
         },
         {
-          label: "移入回收站",
+          label: "删除",
           value: "recycle",
         },
       ],
       operateType: null,
 
-      selectProductCateValue: null,
-      multipleSelection: [],
-      productCateOptions: [],
     };
   },
   created() {
     this.getList();
     this.getCompanyList();
-    // this.getProductCateList();
   },
   watch: {
-    selectProductCateValue: function (newValue) {
-      if (newValue != null && newValue.length == 2) {
-        this.listQuery.productCategoryId = newValue[1];
-      } else {
-        this.listQuery.productCategoryId = null;
-      }
-    },
   },
   filters: {
     verifyStatusFilter(value) {
@@ -363,8 +352,8 @@ export default {
         this.updateDeleteStatus(1, ids);
       });
     },
-    handleUpdateProduct(index, row) {
-      this.$router.push({ path: "/pms/updateProduct", query: { id: row.id } });
+    handleUpdateGame(index, row) {
+      this.$router.push({ path: "/games/updateGame", query: { id: row.id } });
     },
 
     // 修改游戏状态
@@ -427,7 +416,10 @@ export default {
         });
       });
     },
-
+    // 重置筛选条件
+    handleResetSearch() {
+      this.listQuery = Object.assign({}, defaultListQuery);
+    },
   },
 };
 </script>

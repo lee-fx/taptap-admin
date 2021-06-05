@@ -4,14 +4,14 @@
       <el-form-item label="游戏名称：" prop="name">
         <el-input v-model="value.name"></el-input>
       </el-form-item>
-      <el-form-item label="游戏公司：" prop="company_name">
-        <el-select v-model="value.company_name" @change="handleGameChange" placeholder="请选择">
+      <el-form-item label="游戏公司：" prop="company_id">
+        <el-select v-model="value.company_id" @change="handleGameChange" placeholder="请选择">
           <el-option v-for="item in companyOptions" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="游戏介绍：" prop="description">
-        <el-input :autoSize="true" v-model="value.description" type="textarea" placeholder="请输入内容"></el-input>
+        <el-input :autoSize="true" v-model="value.description" autosize type="textarea" placeholder="请输入内容"></el-input>
       </el-form-item>
       <el-form-item label="初始评星：">
         <el-input v-model="value.mana"></el-input>
@@ -28,7 +28,6 @@
       </el-form-item>
 
       <el-form-item label="游戏标签：">
-
         <el-checkbox-group v-model="selectTagList">
           <el-checkbox v-for="tag in tags" :label="tag.id" :key="tag.id" :value="tag.id">{{tag.tagName}}</el-checkbox>
         </el-checkbox-group>
@@ -84,13 +83,13 @@ export default {
       // console.log(response.data);
       this.tags = response.data;
     });
-    this.getGameCompanyList();
+    this.getGameCompanyList()
   },
   computed: {
-    //商品的编号
-    gameId() {
-      return this.value.id;
-    },
+    //游戏id
+    // gameId() {
+    //   return this.value.id;
+    // },
     //选中的服务保证
     selectTagList: {
       get() {
@@ -124,12 +123,12 @@ export default {
     },
   },
   watch: {
-    gameId: function (newValue) {
-      if (!this.isEdit) return;
-      if (this.hasEditCreated) return;
-      if (newValue === undefined || newValue == null || newValue === 0) return;
-      this.handleEditCreated();
-    },
+    // gameId: function (newValue) {
+    //   if (!this.isEdit) return;
+    //   if (this.hasEditCreated) return;
+    //   if (newValue === undefined || newValue == null || newValue === 0) return;
+    //   this.handleEditCreated();
+    // },
   },
   methods: {
     //处理编辑逻辑
@@ -161,16 +160,16 @@ export default {
       });
     },
     handleGameChange(val) {
-      let companyName = "";
+      // let companyName = "";
       let companyId = "";
       for (let i = 0; i < this.companyOptions.length; i++) {
         if (this.companyOptions[i].value === val) {
-          companyName = this.companyOptions[i].label;
+          // companyName = this.companyOptions[i].label;
           companyId = this.companyOptions[i].value;
           break;
         }
       }
-      this.value.company_name = companyName;
+      // this.value.company_name = companyName;
       this.value.company_id = companyId;
     },
   },
