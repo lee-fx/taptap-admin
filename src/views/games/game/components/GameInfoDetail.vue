@@ -23,7 +23,7 @@
         <el-input v-model="value.game_version"></el-input>
       </el-form-item>
       <el-form-item label="游戏状态：">
-        <el-switch v-model="value.status" :active-value="1" :inactive-value="0">
+        <el-switch v-model="value.status" :active-value="0" :inactive-value="1">
         </el-switch>
       </el-form-item>
 

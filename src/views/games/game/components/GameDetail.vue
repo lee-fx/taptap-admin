@@ -37,6 +37,7 @@ const defaultGameParam = {
   status: 0,
   company_id: 0,
   game_tag_ids: "",
+  fileList: [],
 };
 export default {
   name: "GameDetail",
@@ -60,7 +61,13 @@ export default {
   created() {
     if (this.isEdit) {
       getGame(this.$route.query.id).then((response) => {
+        console.log(response.data);
+        let tmp = [];
         this.gameParam = response.data;
+        if (response.data.file.url != "") {
+          tmp.push(response.data.file);
+          this.gameParam.fileList = tmp;
+        }
       });
       // this.getGameCompanyList();
       gameTagListByGameId({ game_id: this.$route.query.id }).then(
@@ -101,7 +108,7 @@ export default {
         type: "warning",
       }).then(() => {
         if (isEdit) {
-          updateGame(this.$route.query.id, this.gameParam).then((response) => {
+          updateGame(this.gameParam).then((response) => {
             this.$message({
               type: "success",
               message: "提交成功",

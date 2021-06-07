@@ -46,6 +46,17 @@ export function updateGameStatus(params) {
     })
 }
 
+
+// 删除游戏
+export function gameDelete(params) {
+    return request({
+        url: '/game/delete',
+        method: 'post',
+        params: params
+    })
+}
+
+
 export function fetchSimpleList(params) {
     return request({
         url: '/game/simpleList',
@@ -62,9 +73,9 @@ export function createGame(data) {
     })
 }
 
-export function updateGame(id, data) {
+export function updateGame(data) {
     return request({
-        url: '/game/update/' + id,
+        url: '/game/update',
         method: 'post',
         data: data
     })

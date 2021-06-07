@@ -133,6 +133,7 @@ import {
   gameTagListByGameId,
   updateGameTagList,
   updateGameStatus,
+  gameDelete,
 } from "@/api/game";
 
 import { fetchList as fetchCompanyList } from "@/api/company";
@@ -178,15 +179,13 @@ export default {
         },
       ],
       operateType: null,
-
     };
   },
   created() {
     this.getList();
     this.getCompanyList();
   },
-  watch: {
-  },
+  watch: {},
   filters: {
     verifyStatusFilter(value) {
       if (value === 1) {
@@ -309,7 +308,7 @@ export default {
             this.updateGameStatus(0, ids);
             break;
           case this.operates[2].value:
-            this.updateDeleteStatus(1, ids);
+            this.gameDelete(ids);
             break;
           default:
             break;
@@ -341,17 +340,6 @@ export default {
       this.updateGameStatus(row.status, ids);
     },
 
-    handleDelete(index, row) {
-      this.$confirm("是否要进行删除操作?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        let ids = [];
-        ids.push(row.id);
-        this.updateDeleteStatus(1, ids);
-      });
-    },
     handleUpdateGame(index, row) {
       this.$router.push({ path: "/games/updateGame", query: { id: row.id } });
     },
@@ -370,11 +358,20 @@ export default {
       });
     },
 
-    updateDeleteStatus(deleteStatus, ids) {
+    handleDelete(index, row) {
+      this.$confirm("是否要进行删除操作?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        this.gameDelete(row.id);
+      });
+    },
+
+    gameDelete(ids) {
       let params = new URLSearchParams();
       params.append("ids", ids);
-      params.append("deleteStatus", deleteStatus);
-      updateDeleteStatus(params).then((response) => {
+      gameDelete(params).then((response) => {
         this.$message({
           message: "删除成功",
           type: "success",
